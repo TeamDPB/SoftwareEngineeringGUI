@@ -1,0 +1,17 @@
+#Team Project 2014
+
+## Team
+* Team of 3 people
+
+## Repository
+* Github account
+
+## Demonstrate
+* Demonstarte Miglayout skill
+* Demonstrate commit history (who did what)
+* Demonstrate push, pull and merge
+
+##Accountability
+* Who committed what etc
+
+We need to design a gui for monday 09/11/2014 on pencil : http://pencil.evolus.vn/
