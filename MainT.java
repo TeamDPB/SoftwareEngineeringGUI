@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,6 +11,9 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +62,8 @@ import java.awt.Color;
 import java.beans.PropertyChangeListener;
 
 public class MainT extends JPanel implements PropertyChangeListener {
+	public MainT() {
+	}
 	private static final JLabel lblLocation = new JLabel("Location");
 	private static final JMenuBar menuBar = new JMenuBar();
 	private static final JMenu mnFile = new JMenu("File");
@@ -71,6 +77,9 @@ public class MainT extends JPanel implements PropertyChangeListener {
 	private static  Image img;
 	private File f;
 	private JLabel impr;
+	private static JTree tree;
+
+	
 
 	/**
 	 * @param args
@@ -122,25 +131,30 @@ public class MainT extends JPanel implements PropertyChangeListener {
 									.toString());
 
 							fileSystemModel = new FileSystemModel();
-							JTree tree = new JTree(fileSystemModel);
-
+							final JTree tree = new JTree(fileSystemModel);
+						
 							scrollPanenew.setViewportView(tree);
 
 							// frame.getContentPane().add(scrollPanenew,
 							// BorderLayout.CENTER);
 							tree.addTreeSelectionListener(new TreeSelectionListener() {
 								public void valueChanged(TreeSelectionEvent e) {
+									
 
 									Object object = e.getPath()
 											.getLastPathComponent();
 									if (object instanceof File) {
 										File file = (File) object;
+									
 										
-										if (file.toString().toLowerCase().endsWith(".jpg")) {											
+										if (file.toString().toLowerCase().endsWith(".jpg") ) {
+											
 												BufferedImage image = null;
 										        try
 										        {
-										          image = ImageIO.read(file);										          
+										          image = ImageIO.read(file);
+										          DisplayImage di = new DisplayImage(file);
+										          
 										        }
 										        catch (Exception e1)
 										        {
@@ -153,16 +167,26 @@ public class MainT extends JPanel implements PropertyChangeListener {
 										        imageIcon = new ImageIcon(newimg);  // transform it back
 										       // Dimension size = new Dimension(500,500);
 										        imagePrew.setIcon(imageIcon);
-								
-										   
+										   	 tree.addMouseListener(new MouseAdapter() {
+											      public void mouseClicked(MouseEvent e) {
+											    	  if(e.getClickCount() >= 2){
+											    		
+											    		    
+											    	  }
+											      }
+											    });   
+										       
 										}
-										  }				
+										  }	
+									
+									
 									
 										}
 
 									
 															
 							});
+							
 
 						} else {
 							System.out.println("No Selection");
@@ -176,6 +200,7 @@ public class MainT extends JPanel implements PropertyChangeListener {
 			}
 		});
 		
+		
 
 		mnFile.add(mntmClear);
 		// JPanel panel = new JPanel();
@@ -184,6 +209,13 @@ public class MainT extends JPanel implements PropertyChangeListener {
 		// frame.setLocation(300, 300);
 		frame.setVisible(true);
 	}
+	 static void doMouseClicked(MouseEvent me) {
+		    TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
+		    if (tp != null)
+		      locationField.setText(tp.toString());
+		    else
+		      locationField.setText("");
+		  }
 	 public void paintComponent(Graphics g) {
 		  // fill the background
 		  if (img != null) {
@@ -341,33 +373,43 @@ class FileSystemModel implements TreeModel {
 			}
 
 		});
+		
 	}
+	
 }
 class DisplayImage {
 	 
 	 private Image img;
 	  
-    public DisplayImage(File f) throws IOException
-    {
-        BufferedImage img=ImageIO.read(f);
-        ImageIcon icon=new ImageIcon(img);
-        JFrame frame=new JFrame();
-        
-        frame.setLayout(new FlowLayout());
-        frame.setSize(400,400);
-        JLabel lbl=new JLabel();
-      
-        lbl.setIcon(icon);
-        frame.add(lbl);
-        frame.setVisible(true);
-      
-    }
-    public void paintComponent(Graphics g) {
-    	  // fill the background
-    	  if (img != null) {
-    	   // draw the image
-    	   g.drawImage(img,0,0,300,300,null);
-    	  
-    	  }
-    	 }
+   public DisplayImage(File f) throws IOException
+   {
+       BufferedImage img=ImageIO.read(f);
+       ImageIcon icon=new ImageIcon(img);
+       Image images = icon.getImage(); // transform it 
+       Image newimg = images.getScaledInstance(400, 200,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+       icon = new ImageIcon(newimg);  // transform it back
+       JFrame frame=new JFrame();
+       
+       frame.setLayout(new FlowLayout());
+       frame.setSize(400,400);
+       JLabel lbl=new JLabel();
+       
+       
+       
+     
+       lbl.setIcon(icon);
+       frame.add(lbl);
+       
+       frame.setVisible(true);
+     
+   }
+   public void paintComponent(Graphics g) {
+   	  // fill the background
+   	  if (img != null) {
+   	   // draw the image
+   	   g.drawImage(img,0,0,300,300,null);
+   	  
+   	  }
+   	 }
 }
+  
